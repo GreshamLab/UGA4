@@ -1,0 +1,120 @@
+---
+title: "20201019 UGA4 Metadata"
+author: "Emily Adney"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+  html_notebook:
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+---
+The goal is to consider the metadata of all participants in the UGA4 cohort
+as well as the HAI data for D0 and Day 28. 
+
+(HAI data for all cohorts is kept live at https://www.synapse.org/#!Synapse:syn21777633)
+6 participants do not have availavle HAI data and have been removed. 
+
+So far we have chosen 160 participants for trancriptomics work done in Year 1. 
+We would like to choose 160 more for Year 2. 
+
+```{r}
+library(tidyverse)
+library(readr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(wesanderson) #colors
+myCol <- wes_palette("Moonrise3", 4)
+```
+
+For the file being used (20201019_UGA4_Metadata.csv), this is a description some of the column headers :
+[id]:Columns.jpg
+
+```{r}
+UGA4_Metadata <- read_csv("20201019_UGA4_Metadata.csv")
+dim(UGA4_Metadata)
+str(UGA4_Metadata)
+```
+
+Generate a table from csv : 
+
+```{r}
+knitr::kable(UGA4_Metadata)
+summary(UGA4_Metadata)
+```
+
+```{r}
+ggplot(data = UGA4_Metadata, mapping = aes(x = Age)) +
+ geom_histogram()
+
+```
+```{r}
+ggplot(data = UGA4_Metadata, mapping = aes(x = BMI_Value)) +
+ geom_histogram()
+
+```
+
+```{r}
+ggplot(data = UGA4_Metadata, mapping = aes(x = Seroconversion_TedsScore_AllStrains)) +
+ geom_histogram()
+
+```
+
+```{r}
+ggplot(data = UGA4_Metadata) +
+  geom_bar(mapping = aes(x = BMI_Category))
+
+```
+
+
+```{r}
+ggplot(data = UGA4_Metadata) +
+  geom_bar(mapping = aes(x = SeroConversion_AllStrains))
+```
+
+```{r}
+ggplot(data = UGA4_Metadata, mapping = aes(x = Age, y =  BMI_Value)) +
+  geom_point(aes(color = Gender))
+
+```
+
+
+```{r}
+ggplot(data = UGA4_Metadata) +
+  geom_bar(mapping = aes(x = D0_ALLSTRAINS_SEROSTATUS))
+```
+
+Day 0 SeroStatus by Strain 
+
+```{r}
+plotdata <- UGA4_Metadata %>% select(UGA_ID,Baseline_Serostatus_H1N1, Baseline_Serostatus_H3N2 ,Baseline_Serostatus_Yamagata,Baseline_Serostatus_Victoria) %>%
+  rename(D0_Sero_H1N1 = Baseline_Serostatus_H1N1, D0_Sero_H3N2 = Baseline_Serostatus_H3N2, D0_Sero_Yama = Baseline_Serostatus_Yamagata, D0_Sero_Vict = Baseline_Serostatus_Victoria) %>%
+  melt(id = "UGA_ID") %>%
+  group_by(variable,value) %>%
+  summarize(n())
+
+ggplot(plotdata, aes(fill=value, y=`n()`, x=variable)) + 
+    geom_bar(position="stack", stat="identity") +
+  ylab("count") +
+  xlab("")
+```
+
+Day 28 SeroStatus by Strain 
+
+```{r}
+plotdata <- UGA4_Metadata %>% select(UGA_ID, D28_Serostatus_H1N1, D28_Serostatus_H3N2 , D28_Serostatus_Yamagata, D28_Serostatus_Victoria) %>%
+  rename(D28_Sero_H1N1 = D28_Serostatus_H1N1, D28_Sero_H3N2 = D28_Serostatus_H3N2, D28_Sero_Yama = D28_Serostatus_Yamagata, D28_Sero_Vict = D28_Serostatus_Victoria) %>%
+  melt(id = "UGA_ID") %>%
+  group_by(variable,value) %>%
+  summarize(n())
+
+ggplot(plotdata, aes(fill=value, y=`n()`, x=variable)) + 
+    geom_bar(position="stack", stat="identity") +
+  ylab("count") +
+  xlab("")
+```
+
