@@ -20,6 +20,8 @@ as well as the HAI data for D0 and Day 28.
 So far we have chosen 160 participants for trancriptomics work done in Year 1. 
 We would like to choose 160 more for Year 2. 
 
+We are going to analyze all 362 samples.
+
 ```{r}
 library(tidyverse)
 library(readr)

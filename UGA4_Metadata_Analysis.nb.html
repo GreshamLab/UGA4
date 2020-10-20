@@ -1479,13 +1479,13 @@ window.initializeCodeFolding = function(show) {
   var currentIndex = 1;
 
   // select all R code blocks
-  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
+  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia');
   rCodeBlocks.each(function() {
 
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
-    show = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
-    if (show) div.addClass('in');
+    if (show || $(this)[0].classList.contains('fold-show'))
+      div.addClass('in');
     var id = 'rcode-643E0F36' + currentIndex++;
     div.attr('id', id);
     $(this).before(div);
@@ -1755,135 +1755,110 @@ summary {
 <p>The goal is to consider the metadata of all participants in the UGA4 cohort as well as the HAI data for D0 and Day 28.</p>
 <p>(HAI data for all cohorts is kept live at <a href="https://www.synapse.org/#!Synapse:syn21777633" class="uri">https://www.synapse.org/#!Synapse:syn21777633</a>) 6 participants do not have availavle HAI data and have been removed.</p>
 <p>So far we have chosen 160 participants for trancriptomics work done in Year 1. We would like to choose 160 more for Year 2.</p>
+<p>We are going to analyze all 362 samples.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KHJlYWRyKVxubGlicmFyeSh0aWR5cilcbmxpYnJhcnkoZHBseXIpXG5saWJyYXJ5KGdncGxvdDIpXG5saWJyYXJ5KHJlc2hhcGUyKVxubGlicmFyeSh3ZXNhbmRlcnNvbikgI2NvbG9yc1xubXlDb2wgPC0gd2VzX3BhbGV0dGUoXCJNb29ucmlzZTNcIiwgNClcbmBgYCJ9 -->
-<pre class="r"><code>library(tidyverse)
-library(readr)
-library(tidyr)
-library(dplyr)
-library(ggplot2)
-library(reshape2)
-library(wesanderson) #colors
-myCol &lt;- wes_palette(&quot;Moonrise3&quot;, 4)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KHJlYWRyKVxubGlicmFyeSh0aWR5cilcbmxpYnJhcnkoZHBseXIpXG5saWJyYXJ5KGdncGxvdDIpXG5saWJyYXJ5KHJlc2hhcGUyKVxubGlicmFyeSh3ZXNhbmRlcnNvbikgI2NvbG9yc1xubXlDb2wgPC0gd2VzX3BhbGV0dGUoXFxNb29ucmlzZTNcXCwgNClcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r library(tidyverse) library(readr) library(tidyr) library(dplyr) library(ggplot2) library(reshape2) library(wesanderson) #colors myCol &lt;- wes_palette(3, 4)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>For the file being used (20201019_UGA4_Metadata.csv), this is a description some of the column headers : [id]:Columns.jpg</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVUdBNF9NZXRhZGF0YSA8LSByZWFkX2NzdihcIjIwMjAxMDE5X1VHQTRfTWV0YWRhdGEuY3N2XCIpXG5kaW0oVUdBNF9NZXRhZGF0YSlcbnN0cihVR0E0X01ldGFkYXRhKVxuYGBgIn0= -->
-<pre class="r"><code>UGA4_Metadata &lt;- read_csv(&quot;20201019_UGA4_Metadata.csv&quot;)
-dim(UGA4_Metadata)
-str(UGA4_Metadata)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuVUdBNF9NZXRhZGF0YSA8LSByZWFkX2NzdihcXDIwMjAxMDE5X1VHQTRfTWV0YWRhdGEuY3N2XFwpXG5kaW0oVUdBNF9NZXRhZGF0YSlcbnN0cihVR0E0X01ldGFkYXRhKVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r UGA4_Metadata &lt;- read_csv(\20201019_UGA4_Metadata.csv) dim(UGA4_Metadata) str(UGA4_Metadata)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Generate a table from csv :</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua25pdHI6OmthYmxlKFVHQTRfTWV0YWRhdGEpXG5zdW1tYXJ5KFVHQTRfTWV0YWRhdGEpXG5gYGAifQ== -->
-<pre class="r"><code>knitr::kable(UGA4_Metadata)
-summary(UGA4_Metadata)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxua25pdHI6OmthYmxlKFVHQTRfTWV0YWRhdGEpXG5zdW1tYXJ5KFVHQTRfTWV0YWRhdGEpXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r knitr::kable(UGA4_Metadata) summary(UGA4_Metadata)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBBZ2UpKSArXG4gZ2VvbV9oaXN0b2dyYW0oKVxuXG5gYGAifQ== -->
-<pre class="r"><code>ggplot(data = UGA4_Metadata, mapping = aes(x = Age)) +
- geom_histogram()
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBBZ2UpKSArXG4gZ2VvbV9oaXN0b2dyYW0oKVxuXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r ggplot(data = UGA4_Metadata, mapping = aes(x = Age)) + geom_histogram()</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBCTUlfVmFsdWUpKSArXG4gZ2VvbV9oaXN0b2dyYW0oKVxuXG5gYGAifQ== -->
-<pre class="r"><code>ggplot(data = UGA4_Metadata, mapping = aes(x = BMI_Value)) +
- geom_histogram()
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBTZXJvY29udmVyc2lvbl9UZWRzU2NvcmVfQWxsU3RyYWlucykpICtcbiBnZW9tX2hpc3RvZ3JhbSgpXG5cbmBgYCJ9 -->
-<pre class="r"><code>ggplot(data = UGA4_Metadata, mapping = aes(x = Seroconversion_TedsScore_AllStrains)) +
- geom_histogram()
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBCTUlfVmFsdWUpKSArXG4gZ2VvbV9oaXN0b2dyYW0oKVxuXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r ggplot(data = UGA4_Metadata, mapping = aes(x = BMI_Value)) + geom_histogram()</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhKSArXG4gIGdlb21fYmFyKG1hcHBpbmcgPSBhZXMoeCA9IEJNSV9DYXRlZ29yeSkpXG5cbmBgYCJ9 -->
-<pre class="r"><code>ggplot(data = UGA4_Metadata) +
-  geom_bar(mapping = aes(x = BMI_Category))
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBTZXJvY29udmVyc2lvbl9UZWRzU2NvcmVfQWxsU3RyYWlucykpICtcbiBnZW9tX2hpc3RvZ3JhbSgpXG5cbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r ggplot(data = UGA4_Metadata, mapping = aes(x = Seroconversion_TedsScore_AllStrains)) + geom_histogram()</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhKSArXG4gIGdlb21fYmFyKG1hcHBpbmcgPSBhZXMoeCA9IFNlcm9Db252ZXJzaW9uX0FsbFN0cmFpbnMpKVxuYGBgIn0= -->
-<pre class="r"><code>ggplot(data = UGA4_Metadata) +
-  geom_bar(mapping = aes(x = SeroConversion_AllStrains))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhKSArXG4gIGdlb21fYmFyKG1hcHBpbmcgPSBhZXMoeCA9IEJNSV9DYXRlZ29yeSkpXG5cbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r ggplot(data = UGA4_Metadata) + geom_bar(mapping = aes(x = BMI_Category))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBBZ2UsIHkgPSAgQk1JX1ZhbHVlKSkgK1xuICBnZW9tX3BvaW50KGFlcyhjb2xvciA9IEdlbmRlcikpXG5cbmBgYCJ9 -->
-<pre class="r"><code>ggplot(data = UGA4_Metadata, mapping = aes(x = Age, y =  BMI_Value)) +
-  geom_point(aes(color = Gender))
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhKSArXG4gIGdlb21fYmFyKG1hcHBpbmcgPSBhZXMoeCA9IFNlcm9Db252ZXJzaW9uX0FsbFN0cmFpbnMpKVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r ggplot(data = UGA4_Metadata) + geom_bar(mapping = aes(x = SeroConversion_AllStrains))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhKSArXG4gIGdlb21fYmFyKG1hcHBpbmcgPSBhZXMoeCA9IEQwX0FMTFNUUkFJTlNfU0VST1NUQVRVUykpXG5gYGAifQ== -->
-<pre class="r"><code>ggplot(data = UGA4_Metadata) +
-  geom_bar(mapping = aes(x = D0_ALLSTRAINS_SEROSTATUS))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBBZ2UsIHkgPSAgQk1JX1ZhbHVlKSkgK1xuICBnZW9tX3BvaW50KGFlcyhjb2xvciA9IEdlbmRlcikpXG5cbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r ggplot(data = UGA4_Metadata, mapping = aes(x = Age, y = BMI_Value)) + geom_point(aes(color = Gender))</p>
+<pre><code></code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhKSArXG4gIGdlb21fYmFyKG1hcHBpbmcgPSBhZXMoeCA9IEQwX0FMTFNUUkFJTlNfU0VST1NUQVRVUykpXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r ggplot(data = UGA4_Metadata) + geom_bar(mapping = aes(x = D0_ALLSTRAINS_SEROSTATUS))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Day 0 SeroStatus by Strain</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdGRhdGEgPC0gVUdBNF9NZXRhZGF0YSAlPiUgc2VsZWN0KFVHQV9JRCxCYXNlbGluZV9TZXJvc3RhdHVzX0gxTjEsIEJhc2VsaW5lX1Nlcm9zdGF0dXNfSDNOMiAsQmFzZWxpbmVfU2Vyb3N0YXR1c19ZYW1hZ2F0YSxCYXNlbGluZV9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiVcbiAgcmVuYW1lKEQwX1Nlcm9fSDFOMSA9IEJhc2VsaW5lX1Nlcm9zdGF0dXNfSDFOMSwgRDBfU2Vyb19IM04yID0gQmFzZWxpbmVfU2Vyb3N0YXR1c19IM04yLCBEMF9TZXJvX1lhbWEgPSBCYXNlbGluZV9TZXJvc3RhdHVzX1lhbWFnYXRhLCBEMF9TZXJvX1ZpY3QgPSBCYXNlbGluZV9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiVcbiAgbWVsdChpZCA9IFwiVUdBX0lEXCIpICU+JVxuICBncm91cF9ieSh2YXJpYWJsZSx2YWx1ZSkgJT4lXG4gIHN1bW1hcml6ZShuKCkpXG5cbmdncGxvdChwbG90ZGF0YSwgYWVzKGZpbGw9dmFsdWUsIHk9YG4oKWAsIHg9dmFyaWFibGUpKSArIFxuICAgIGdlb21fYmFyKHBvc2l0aW9uPVwic3RhY2tcIiwgc3RhdD1cImlkZW50aXR5XCIpICtcbiAgeWxhYihcImNvdW50XCIpICtcbiAgeGxhYihcIlwiKVxuYGBgIn0= -->
-<pre class="r"><code>plotdata &lt;- UGA4_Metadata %&gt;% select(UGA_ID,Baseline_Serostatus_H1N1, Baseline_Serostatus_H3N2 ,Baseline_Serostatus_Yamagata,Baseline_Serostatus_Victoria) %&gt;%
-  rename(D0_Sero_H1N1 = Baseline_Serostatus_H1N1, D0_Sero_H3N2 = Baseline_Serostatus_H3N2, D0_Sero_Yama = Baseline_Serostatus_Yamagata, D0_Sero_Vict = Baseline_Serostatus_Victoria) %&gt;%
-  melt(id = &quot;UGA_ID&quot;) %&gt;%
-  group_by(variable,value) %&gt;%
-  summarize(n())
-
-ggplot(plotdata, aes(fill=value, y=`n()`, x=variable)) + 
-    geom_bar(position=&quot;stack&quot;, stat=&quot;identity&quot;) +
-  ylab(&quot;count&quot;) +
-  xlab(&quot;&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucGxvdGRhdGEgPC0gVUdBNF9NZXRhZGF0YSAlPiUgc2VsZWN0KFVHQV9JRCxCYXNlbGluZV9TZXJvc3RhdHVzX0gxTjEsIEJhc2VsaW5lX1Nlcm9zdGF0dXNfSDNOMiAsQmFzZWxpbmVfU2Vyb3N0YXR1c19ZYW1hZ2F0YSxCYXNlbGluZV9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiVcbiAgcmVuYW1lKEQwX1Nlcm9fSDFOMSA9IEJhc2VsaW5lX1Nlcm9zdGF0dXNfSDFOMSwgRDBfU2Vyb19IM04yID0gQmFzZWxpbmVfU2Vyb3N0YXR1c19IM04yLCBEMF9TZXJvX1lhbWEgPSBCYXNlbGluZV9TZXJvc3RhdHVzX1lhbWFnYXRhLCBEMF9TZXJvX1ZpY3QgPSBCYXNlbGluZV9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiVcbiAgbWVsdChpZCA9IFxcVUdBX0lEXFwpICU+JVxuICBncm91cF9ieSh2YXJpYWJsZSx2YWx1ZSkgJT4lXG4gIHN1bW1hcml6ZShuKCkpXG5cbmdncGxvdChwbG90ZGF0YSwgYWVzKGZpbGw9dmFsdWUsIHk9YG4oKWAsIHg9dmFyaWFibGUpKSArIFxuICAgIGdlb21fYmFyKHBvc2l0aW9uPVxcc3RhY2tcXCwgc3RhdD1cXGlkZW50aXR5XFwpICtcbiAgeWxhYihcXGNvdW50XFwpICtcbiAgeGxhYihcXFxcKVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r plotdata &lt;- UGA4_Metadata %&gt;% select(UGA_ID,Baseline_Serostatus_H1N1, Baseline_Serostatus_H3N2 ,Baseline_Serostatus_Yamagata,Baseline_Serostatus_Victoria) %&gt;% rename(D0_Sero_H1N1 = Baseline_Serostatus_H1N1, D0_Sero_H3N2 = Baseline_Serostatus_H3N2, D0_Sero_Yama = Baseline_Serostatus_Yamagata, D0_Sero_Vict = Baseline_Serostatus_Victoria) %&gt;% melt(id = _ID) %&gt;% group_by(variable,value) %&gt;% summarize(n())</p>
+<p>ggplot(plotdata, aes(fill=value, y=<code>n()</code>, x=variable)) + geom_bar(position=, stat=) + ylab() + xlab(\)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Day 28 SeroStatus by Strain</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdGRhdGEgPC0gVUdBNF9NZXRhZGF0YSAlPiUgc2VsZWN0KFVHQV9JRCwgRDI4X1Nlcm9zdGF0dXNfSDFOMSwgRDI4X1Nlcm9zdGF0dXNfSDNOMiAsIEQyOF9TZXJvc3RhdHVzX1lhbWFnYXRhLCBEMjhfU2Vyb3N0YXR1c19WaWN0b3JpYSkgJT4lXG4gIHJlbmFtZShEMjhfU2Vyb19IMU4xID0gRDI4X1Nlcm9zdGF0dXNfSDFOMSwgRDI4X1Nlcm9fSDNOMiA9IEQyOF9TZXJvc3RhdHVzX0gzTjIsIEQyOF9TZXJvX1lhbWEgPSBEMjhfU2Vyb3N0YXR1c19ZYW1hZ2F0YSwgRDI4X1Nlcm9fVmljdCA9IEQyOF9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiVcbiAgbWVsdChpZCA9IFwiVUdBX0lEXCIpICU+JVxuICBncm91cF9ieSh2YXJpYWJsZSx2YWx1ZSkgJT4lXG4gIHN1bW1hcml6ZShuKCkpXG5cbmdncGxvdChwbG90ZGF0YSwgYWVzKGZpbGw9dmFsdWUsIHk9YG4oKWAsIHg9dmFyaWFibGUpKSArIFxuICAgIGdlb21fYmFyKHBvc2l0aW9uPVwic3RhY2tcIiwgc3RhdD1cImlkZW50aXR5XCIpICtcbiAgeWxhYihcImNvdW50XCIpICtcbiAgeGxhYihcIlwiKVxuYGBgIn0= -->
-<pre class="r"><code>plotdata &lt;- UGA4_Metadata %&gt;% select(UGA_ID, D28_Serostatus_H1N1, D28_Serostatus_H3N2 , D28_Serostatus_Yamagata, D28_Serostatus_Victoria) %&gt;%
-  rename(D28_Sero_H1N1 = D28_Serostatus_H1N1, D28_Sero_H3N2 = D28_Serostatus_H3N2, D28_Sero_Yama = D28_Serostatus_Yamagata, D28_Sero_Vict = D28_Serostatus_Victoria) %&gt;%
-  melt(id = &quot;UGA_ID&quot;) %&gt;%
-  group_by(variable,value) %&gt;%
-  summarize(n())
-
-ggplot(plotdata, aes(fill=value, y=`n()`, x=variable)) + 
-    geom_bar(position=&quot;stack&quot;, stat=&quot;identity&quot;) +
-  ylab(&quot;count&quot;) +
-  xlab(&quot;&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucGxvdGRhdGEgPC0gVUdBNF9NZXRhZGF0YSAlPiUgc2VsZWN0KFVHQV9JRCwgRDI4X1Nlcm9zdGF0dXNfSDFOMSwgRDI4X1Nlcm9zdGF0dXNfSDNOMiAsIEQyOF9TZXJvc3RhdHVzX1lhbWFnYXRhLCBEMjhfU2Vyb3N0YXR1c19WaWN0b3JpYSkgJT4lXG4gIHJlbmFtZShEMjhfU2Vyb19IMU4xID0gRDI4X1Nlcm9zdGF0dXNfSDFOMSwgRDI4X1Nlcm9fSDNOMiA9IEQyOF9TZXJvc3RhdHVzX0gzTjIsIEQyOF9TZXJvX1lhbWEgPSBEMjhfU2Vyb3N0YXR1c19ZYW1hZ2F0YSwgRDI4X1Nlcm9fVmljdCA9IEQyOF9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiVcbiAgbWVsdChpZCA9IFxcVUdBX0lEXFwpICU+JVxuICBncm91cF9ieSh2YXJpYWJsZSx2YWx1ZSkgJT4lXG4gIHN1bW1hcml6ZShuKCkpXG5cbmdncGxvdChwbG90ZGF0YSwgYWVzKGZpbGw9dmFsdWUsIHk9YG4oKWAsIHg9dmFyaWFibGUpKSArIFxuICAgIGdlb21fYmFyKHBvc2l0aW9uPVxcc3RhY2tcXCwgc3RhdD1cXGlkZW50aXR5XFwpICtcbiAgeWxhYihcXGNvdW50XFwpICtcbiAgeGxhYihcXFxcKVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r plotdata &lt;- UGA4_Metadata %&gt;% select(UGA_ID, D28_Serostatus_H1N1, D28_Serostatus_H3N2 , D28_Serostatus_Yamagata, D28_Serostatus_Victoria) %&gt;% rename(D28_Sero_H1N1 = D28_Serostatus_H1N1, D28_Sero_H3N2 = D28_Serostatus_H3N2, D28_Sero_Yama = D28_Serostatus_Yamagata, D28_Sero_Vict = D28_Serostatus_Victoria) %&gt;% melt(id = _ID) %&gt;% group_by(variable,value) %&gt;% summarize(n())</p>
+<p>ggplot(plotdata, aes(fill=value, y=<code>n()</code>, x=variable)) + geom_bar(position=, stat=) + ylab() + xlab(\)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiMjAyMDEwMTkgVUdBNCBNZXRhZGF0YSIKYXV0aG9yOiAiRW1pbHkgQWRuZXkiCmRhdGU6ICJgciBmb3JtYXQoU3lzLnRpbWUoKSwgJyVkICVCLCAlWScpYCIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6CiAgICBkZl9wcmludDogcGFnZWQKICAgIHRvYzogeWVzCiAgaHRtbF9ub3RlYm9vazoKICAgIGZpZ19jYXB0aW9uOiB5ZXMKICAgIG51bWJlcl9zZWN0aW9uczogeWVzCiAgICB0b2M6IHllcwotLS0KVGhlIGdvYWwgaXMgdG8gY29uc2lkZXIgdGhlIG1ldGFkYXRhIG9mIGFsbCBwYXJ0aWNpcGFudHMgaW4gdGhlIFVHQTQgY29ob3J0CmFzIHdlbGwgYXMgdGhlIEhBSSBkYXRhIGZvciBEMCBhbmQgRGF5IDI4LiAKCihIQUkgZGF0YSBmb3IgYWxsIGNvaG9ydHMgaXMga2VwdCBsaXZlIGF0IGh0dHBzOi8vd3d3LnN5bmFwc2Uub3JnLyMhU3luYXBzZTpzeW4yMTc3NzYzMykKNiBwYXJ0aWNpcGFudHMgZG8gbm90IGhhdmUgYXZhaWxhdmxlIEhBSSBkYXRhIGFuZCBoYXZlIGJlZW4gcmVtb3ZlZC4gCgpTbyBmYXIgd2UgaGF2ZSBjaG9zZW4gMTYwIHBhcnRpY2lwYW50cyBmb3IgdHJhbmNyaXB0b21pY3Mgd29yayBkb25lIGluIFllYXIgMS4gCldlIHdvdWxkIGxpa2UgdG8gY2hvb3NlIDE2MCBtb3JlIGZvciBZZWFyIDIuIAoKYGBge3J9CmxpYnJhcnkodGlkeXZlcnNlKQpsaWJyYXJ5KHJlYWRyKQpsaWJyYXJ5KHRpZHlyKQpsaWJyYXJ5KGRwbHlyKQpsaWJyYXJ5KGdncGxvdDIpCmxpYnJhcnkocmVzaGFwZTIpCmxpYnJhcnkod2VzYW5kZXJzb24pICNjb2xvcnMKbXlDb2wgPC0gd2VzX3BhbGV0dGUoIk1vb25yaXNlMyIsIDQpCmBgYAoKRm9yIHRoZSBmaWxlIGJlaW5nIHVzZWQgKDIwMjAxMDE5X1VHQTRfTWV0YWRhdGEuY3N2KSwgdGhpcyBpcyBhIGRlc2NyaXB0aW9uIHNvbWUgb2YgdGhlIGNvbHVtbiBoZWFkZXJzIDoKW2lkXTpDb2x1bW5zLmpwZwoKYGBge3J9ClVHQTRfTWV0YWRhdGEgPC0gcmVhZF9jc3YoIjIwMjAxMDE5X1VHQTRfTWV0YWRhdGEuY3N2IikKZGltKFVHQTRfTWV0YWRhdGEpCnN0cihVR0E0X01ldGFkYXRhKQpgYGAKCkdlbmVyYXRlIGEgdGFibGUgZnJvbSBjc3YgOiAKCmBgYHtyfQprbml0cjo6a2FibGUoVUdBNF9NZXRhZGF0YSkKc3VtbWFyeShVR0E0X01ldGFkYXRhKQpgYGAKCmBgYHtyfQpnZ3Bsb3QoZGF0YSA9IFVHQTRfTWV0YWRhdGEsIG1hcHBpbmcgPSBhZXMoeCA9IEFnZSkpICsKIGdlb21faGlzdG9ncmFtKCkKCmBgYApgYGB7cn0KZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBCTUlfVmFsdWUpKSArCiBnZW9tX2hpc3RvZ3JhbSgpCgpgYGAKCmBgYHtyfQpnZ3Bsb3QoZGF0YSA9IFVHQTRfTWV0YWRhdGEsIG1hcHBpbmcgPSBhZXMoeCA9IFNlcm9jb252ZXJzaW9uX1RlZHNTY29yZV9BbGxTdHJhaW5zKSkgKwogZ2VvbV9oaXN0b2dyYW0oKQoKYGBgCgpgYGB7cn0KZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhKSArCiAgZ2VvbV9iYXIobWFwcGluZyA9IGFlcyh4ID0gQk1JX0NhdGVnb3J5KSkKCmBgYAoKCmBgYHtyfQpnZ3Bsb3QoZGF0YSA9IFVHQTRfTWV0YWRhdGEpICsKICBnZW9tX2JhcihtYXBwaW5nID0gYWVzKHggPSBTZXJvQ29udmVyc2lvbl9BbGxTdHJhaW5zKSkKYGBgCgpgYGB7cn0KZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBBZ2UsIHkgPSAgQk1JX1ZhbHVlKSkgKwogIGdlb21fcG9pbnQoYWVzKGNvbG9yID0gR2VuZGVyKSkKCmBgYAoKCmBgYHtyfQpnZ3Bsb3QoZGF0YSA9IFVHQTRfTWV0YWRhdGEpICsKICBnZW9tX2JhcihtYXBwaW5nID0gYWVzKHggPSBEMF9BTExTVFJBSU5TX1NFUk9TVEFUVVMpKQpgYGAKCkRheSAwIFNlcm9TdGF0dXMgYnkgU3RyYWluIAoKYGBge3J9CnBsb3RkYXRhIDwtIFVHQTRfTWV0YWRhdGEgJT4lIHNlbGVjdChVR0FfSUQsQmFzZWxpbmVfU2Vyb3N0YXR1c19IMU4xLCBCYXNlbGluZV9TZXJvc3RhdHVzX0gzTjIgLEJhc2VsaW5lX1Nlcm9zdGF0dXNfWWFtYWdhdGEsQmFzZWxpbmVfU2Vyb3N0YXR1c19WaWN0b3JpYSkgJT4lCiAgcmVuYW1lKEQwX1Nlcm9fSDFOMSA9IEJhc2VsaW5lX1Nlcm9zdGF0dXNfSDFOMSwgRDBfU2Vyb19IM04yID0gQmFzZWxpbmVfU2Vyb3N0YXR1c19IM04yLCBEMF9TZXJvX1lhbWEgPSBCYXNlbGluZV9TZXJvc3RhdHVzX1lhbWFnYXRhLCBEMF9TZXJvX1ZpY3QgPSBCYXNlbGluZV9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiUKICBtZWx0KGlkID0gIlVHQV9JRCIpICU+JQogIGdyb3VwX2J5KHZhcmlhYmxlLHZhbHVlKSAlPiUKICBzdW1tYXJpemUobigpKQoKZ2dwbG90KHBsb3RkYXRhLCBhZXMoZmlsbD12YWx1ZSwgeT1gbigpYCwgeD12YXJpYWJsZSkpICsgCiAgICBnZW9tX2Jhcihwb3NpdGlvbj0ic3RhY2siLCBzdGF0PSJpZGVudGl0eSIpICsKICB5bGFiKCJjb3VudCIpICsKICB4bGFiKCIiKQpgYGAKCkRheSAyOCBTZXJvU3RhdHVzIGJ5IFN0cmFpbiAKCmBgYHtyfQpwbG90ZGF0YSA8LSBVR0E0X01ldGFkYXRhICU+JSBzZWxlY3QoVUdBX0lELCBEMjhfU2Vyb3N0YXR1c19IMU4xLCBEMjhfU2Vyb3N0YXR1c19IM04yICwgRDI4X1Nlcm9zdGF0dXNfWWFtYWdhdGEsIEQyOF9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiUKICByZW5hbWUoRDI4X1Nlcm9fSDFOMSA9IEQyOF9TZXJvc3RhdHVzX0gxTjEsIEQyOF9TZXJvX0gzTjIgPSBEMjhfU2Vyb3N0YXR1c19IM04yLCBEMjhfU2Vyb19ZYW1hID0gRDI4X1Nlcm9zdGF0dXNfWWFtYWdhdGEsIEQyOF9TZXJvX1ZpY3QgPSBEMjhfU2Vyb3N0YXR1c19WaWN0b3JpYSkgJT4lCiAgbWVsdChpZCA9ICJVR0FfSUQiKSAlPiUKICBncm91cF9ieSh2YXJpYWJsZSx2YWx1ZSkgJT4lCiAgc3VtbWFyaXplKG4oKSkKCmdncGxvdChwbG90ZGF0YSwgYWVzKGZpbGw9dmFsdWUsIHk9YG4oKWAsIHg9dmFyaWFibGUpKSArIAogICAgZ2VvbV9iYXIocG9zaXRpb249InN0YWNrIiwgc3RhdD0iaWRlbnRpdHkiKSArCiAgeWxhYigiY291bnQiKSArCiAgeGxhYigiIikKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiMjAyMDEwMTkgVUdBNCBNZXRhZGF0YSIKYXV0aG9yOiAiRW1pbHkgQWRuZXkiCmRhdGU6ICJgciBmb3JtYXQoU3lzLnRpbWUoKSwgJyVkICVCLCAlWScpYCIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6CiAgICBkZl9wcmludDogcGFnZWQKICAgIHRvYzogeWVzCiAgaHRtbF9ub3RlYm9vazoKICAgIGZpZ19jYXB0aW9uOiB5ZXMKICAgIG51bWJlcl9zZWN0aW9uczogeWVzCiAgICB0b2M6IHllcwotLS0KVGhlIGdvYWwgaXMgdG8gY29uc2lkZXIgdGhlIG1ldGFkYXRhIG9mIGFsbCBwYXJ0aWNpcGFudHMgaW4gdGhlIFVHQTQgY29ob3J0CmFzIHdlbGwgYXMgdGhlIEhBSSBkYXRhIGZvciBEMCBhbmQgRGF5IDI4LiAKCihIQUkgZGF0YSBmb3IgYWxsIGNvaG9ydHMgaXMga2VwdCBsaXZlIGF0IGh0dHBzOi8vd3d3LnN5bmFwc2Uub3JnLyMhU3luYXBzZTpzeW4yMTc3NzYzMykKNiBwYXJ0aWNpcGFudHMgZG8gbm90IGhhdmUgYXZhaWxhdmxlIEhBSSBkYXRhIGFuZCBoYXZlIGJlZW4gcmVtb3ZlZC4gCgpTbyBmYXIgd2UgaGF2ZSBjaG9zZW4gMTYwIHBhcnRpY2lwYW50cyBmb3IgdHJhbmNyaXB0b21pY3Mgd29yayBkb25lIGluIFllYXIgMS4gCldlIHdvdWxkIGxpa2UgdG8gY2hvb3NlIDE2MCBtb3JlIGZvciBZZWFyIDIuIAoKV2UgYXJlIGdvaW5nIHRvIGFuYWx5emUgYWxsIDM2MiBzYW1wbGVzLgoKYGBge3J9CmxpYnJhcnkodGlkeXZlcnNlKQpsaWJyYXJ5KHJlYWRyKQpsaWJyYXJ5KHRpZHlyKQpsaWJyYXJ5KGRwbHlyKQpsaWJyYXJ5KGdncGxvdDIpCmxpYnJhcnkocmVzaGFwZTIpCmxpYnJhcnkod2VzYW5kZXJzb24pICNjb2xvcnMKbXlDb2wgPC0gd2VzX3BhbGV0dGUoIk1vb25yaXNlMyIsIDQpCmBgYAoKRm9yIHRoZSBmaWxlIGJlaW5nIHVzZWQgKDIwMjAxMDE5X1VHQTRfTWV0YWRhdGEuY3N2KSwgdGhpcyBpcyBhIGRlc2NyaXB0aW9uIHNvbWUgb2YgdGhlIGNvbHVtbiBoZWFkZXJzIDoKW2lkXTpDb2x1bW5zLmpwZwoKYGBge3J9ClVHQTRfTWV0YWRhdGEgPC0gcmVhZF9jc3YoIjIwMjAxMDE5X1VHQTRfTWV0YWRhdGEuY3N2IikKZGltKFVHQTRfTWV0YWRhdGEpCnN0cihVR0E0X01ldGFkYXRhKQpgYGAKCkdlbmVyYXRlIGEgdGFibGUgZnJvbSBjc3YgOiAKCmBgYHtyfQprbml0cjo6a2FibGUoVUdBNF9NZXRhZGF0YSkKc3VtbWFyeShVR0E0X01ldGFkYXRhKQpgYGAKCmBgYHtyfQpnZ3Bsb3QoZGF0YSA9IFVHQTRfTWV0YWRhdGEsIG1hcHBpbmcgPSBhZXMoeCA9IEFnZSkpICsKIGdlb21faGlzdG9ncmFtKCkKCmBgYApgYGB7cn0KZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBCTUlfVmFsdWUpKSArCiBnZW9tX2hpc3RvZ3JhbSgpCgpgYGAKCmBgYHtyfQpnZ3Bsb3QoZGF0YSA9IFVHQTRfTWV0YWRhdGEsIG1hcHBpbmcgPSBhZXMoeCA9IFNlcm9jb252ZXJzaW9uX1RlZHNTY29yZV9BbGxTdHJhaW5zKSkgKwogZ2VvbV9oaXN0b2dyYW0oKQoKYGBgCgpgYGB7cn0KZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhKSArCiAgZ2VvbV9iYXIobWFwcGluZyA9IGFlcyh4ID0gQk1JX0NhdGVnb3J5KSkKCmBgYAoKCmBgYHtyfQpnZ3Bsb3QoZGF0YSA9IFVHQTRfTWV0YWRhdGEpICsKICBnZW9tX2JhcihtYXBwaW5nID0gYWVzKHggPSBTZXJvQ29udmVyc2lvbl9BbGxTdHJhaW5zKSkKYGBgCgpgYGB7cn0KZ2dwbG90KGRhdGEgPSBVR0E0X01ldGFkYXRhLCBtYXBwaW5nID0gYWVzKHggPSBBZ2UsIHkgPSAgQk1JX1ZhbHVlKSkgKwogIGdlb21fcG9pbnQoYWVzKGNvbG9yID0gR2VuZGVyKSkKCmBgYAoKCmBgYHtyfQpnZ3Bsb3QoZGF0YSA9IFVHQTRfTWV0YWRhdGEpICsKICBnZW9tX2JhcihtYXBwaW5nID0gYWVzKHggPSBEMF9BTExTVFJBSU5TX1NFUk9TVEFUVVMpKQpgYGAKCkRheSAwIFNlcm9TdGF0dXMgYnkgU3RyYWluIAoKYGBge3J9CnBsb3RkYXRhIDwtIFVHQTRfTWV0YWRhdGEgJT4lIHNlbGVjdChVR0FfSUQsQmFzZWxpbmVfU2Vyb3N0YXR1c19IMU4xLCBCYXNlbGluZV9TZXJvc3RhdHVzX0gzTjIgLEJhc2VsaW5lX1Nlcm9zdGF0dXNfWWFtYWdhdGEsQmFzZWxpbmVfU2Vyb3N0YXR1c19WaWN0b3JpYSkgJT4lCiAgcmVuYW1lKEQwX1Nlcm9fSDFOMSA9IEJhc2VsaW5lX1Nlcm9zdGF0dXNfSDFOMSwgRDBfU2Vyb19IM04yID0gQmFzZWxpbmVfU2Vyb3N0YXR1c19IM04yLCBEMF9TZXJvX1lhbWEgPSBCYXNlbGluZV9TZXJvc3RhdHVzX1lhbWFnYXRhLCBEMF9TZXJvX1ZpY3QgPSBCYXNlbGluZV9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiUKICBtZWx0KGlkID0gIlVHQV9JRCIpICU+JQogIGdyb3VwX2J5KHZhcmlhYmxlLHZhbHVlKSAlPiUKICBzdW1tYXJpemUobigpKQoKZ2dwbG90KHBsb3RkYXRhLCBhZXMoZmlsbD12YWx1ZSwgeT1gbigpYCwgeD12YXJpYWJsZSkpICsgCiAgICBnZW9tX2Jhcihwb3NpdGlvbj0ic3RhY2siLCBzdGF0PSJpZGVudGl0eSIpICsKICB5bGFiKCJjb3VudCIpICsKICB4bGFiKCIiKQpgYGAKCkRheSAyOCBTZXJvU3RhdHVzIGJ5IFN0cmFpbiAKCmBgYHtyfQpwbG90ZGF0YSA8LSBVR0E0X01ldGFkYXRhICU+JSBzZWxlY3QoVUdBX0lELCBEMjhfU2Vyb3N0YXR1c19IMU4xLCBEMjhfU2Vyb3N0YXR1c19IM04yICwgRDI4X1Nlcm9zdGF0dXNfWWFtYWdhdGEsIEQyOF9TZXJvc3RhdHVzX1ZpY3RvcmlhKSAlPiUKICByZW5hbWUoRDI4X1Nlcm9fSDFOMSA9IEQyOF9TZXJvc3RhdHVzX0gxTjEsIEQyOF9TZXJvX0gzTjIgPSBEMjhfU2Vyb3N0YXR1c19IM04yLCBEMjhfU2Vyb19ZYW1hID0gRDI4X1Nlcm9zdGF0dXNfWWFtYWdhdGEsIEQyOF9TZXJvX1ZpY3QgPSBEMjhfU2Vyb3N0YXR1c19WaWN0b3JpYSkgJT4lCiAgbWVsdChpZCA9ICJVR0FfSUQiKSAlPiUKICBncm91cF9ieSh2YXJpYWJsZSx2YWx1ZSkgJT4lCiAgc3VtbWFyaXplKG4oKSkKCmdncGxvdChwbG90ZGF0YSwgYWVzKGZpbGw9dmFsdWUsIHk9YG4oKWAsIHg9dmFyaWFibGUpKSArIAogICAgZ2VvbV9iYXIocG9zaXRpb249InN0YWNrIiwgc3RhdD0iaWRlbnRpdHkiKSArCiAgeWxhYigiY291bnQiKSArCiAgeGxhYigiIikKYGBgCgo=</div>
 
 
 
